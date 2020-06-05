@@ -6,7 +6,7 @@ import { useOutsideEvent } from 'react-on-outside-event';
 const App = () => {
     const handler = useOutsideEvent(() => {
         console.log('click-outside');
-    }, 'click');
+    });
     const extraHandler = () => {
         console.log('my Extra');
     };
