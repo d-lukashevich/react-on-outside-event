@@ -42,10 +42,10 @@ import * as React from 'react';
 import { useOutsideEvent } from 'react-on-outside-event';
 
 const outsideClickFunction = (event) => {
-    console.log(event, 'User did move mouse outside of the container.');
+    console.log(event, 'User did click outside of the container.');
 };
 const myFunctionForClickInsideOfContainer = (syntheticEvent) => {
-    console.log(syntheticEvent, 'User did move mouse inside of the container.');
+    console.log(syntheticEvent, 'User did click inside of the container.');
 };
 
 const Example = () => {
@@ -65,7 +65,7 @@ import * as React from 'react';
 import { OutsideEventContainer } from 'react-on-outside-event';
 
 const copyOutsideFunction = (event) => {
-    console.log(event, 'User did move mouse outside of the container.');
+    console.log(event, 'User did copy outside of the container.');
 };
 
 const Example = () => {
@@ -86,7 +86,7 @@ import * as React from 'react';
 import { OutsideEventContainer } from 'react-on-outside-event';
 
 const clickOutsideFunction = (event) => {
-    console.log(event, 'User did move mouse outside of the container.');
+    console.log(event, 'User did click outside of the container.');
 };
 
 const Example = () => {
@@ -106,7 +106,7 @@ import * as React from 'react';
 import { OutsideEventContainer } from 'react-on-outside-event';
 
 const focusOutsideFunction = (event) => {
-    console.log(event, 'User did move mouse outside of the container.');
+    console.log(event, 'User did focus outside of the container.');
 };
 
 const OtherComponent = (props) => {
