@@ -1,4 +1,3 @@
-import pkg from './package.json';
 import typescript from 'rollup-plugin-typescript2';
 import commonjs from 'rollup-plugin-commonjs';
 import external from 'rollup-plugin-peer-deps-external';
@@ -6,19 +5,23 @@ import resolve from 'rollup-plugin-node-resolve';
 import url from 'rollup-plugin-url';
 
 export default {
-    input: 'src/index.tsx',
+    input: {
+        index: 'src/index.ts',
+        useOutsideEvent: 'src/useOutsideEvent.ts',
+        OutsideEventContainer: 'src/OutsideEventContainer.ts'
+    },
     output: [
         {
-            file: pkg.main,
+            dir: 'dist',
             format: 'cjs',
-            exports: 'named',
-            sourcemap: true
+            sourcemap: true,
+            exports: 'named'
         },
         {
-            file: pkg.module,
+            dir: 'dist/esm',
             format: 'es',
-            exports: 'named',
-            sourcemap: true
+            sourcemap: true,
+            exports: 'named'
         }
     ],
     plugins: [
@@ -26,6 +29,7 @@ export default {
         url({ exclude: ['**/*.svg'] }),
         resolve(),
         typescript({
+            useTsconfigDeclarationDir: true,
             rollupCommonJSResolveHack: true,
             clean: true
         }),

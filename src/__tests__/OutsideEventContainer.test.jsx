@@ -2,7 +2,7 @@ import React from 'react';
 import { render, unmountComponentAtNode, createPortal } from 'react-dom';
 import { act } from 'react-dom/test-utils';
 
-import { useOutsideEvent } from '../useOutsideEvent';
+import OutsideEventContainer from '../OutsideEventContainer';
 
 const getContainers = () => {
     const outsideDiv = document.querySelector('#outside');
@@ -11,7 +11,7 @@ const getContainers = () => {
     return { outsideDiv, insideDiv, insideDivInPortal };
 };
 
-let container: any = null;
+let container = null;
 let onOutsideClick = jest.fn();
 let onInsideClick = jest.fn();
 beforeEach(() => {
@@ -31,10 +31,9 @@ it('catch clicks outside of container', () => {
     act(() => {
         render(
             React.createElement(() => {
-                const handler = useOutsideEvent(onOutsideClick);
                 return (
                     <>
-                        <div id={'inside'} onClick={handler} />
+                        <OutsideEventContainer id={'inside'} callback={onOutsideClick} />
                         <div id={'outside'} />
                     </>
                 );
@@ -59,10 +58,9 @@ it('catch clicks outside of container and execute nested handler', () => {
     act(() => {
         render(
             React.createElement(() => {
-                const handler = useOutsideEvent(onOutsideClick);
                 return (
                     <>
-                        <div id={'inside'} onClick={handler(onInsideClick)} />
+                        <OutsideEventContainer id={'inside'} onClick={onInsideClick} callback={onOutsideClick} />
                         <div id={'outside'} />
                     </>
                 );
@@ -88,12 +86,11 @@ it('do not catch clicks inside portal (outside in DOM)', () => {
     act(() => {
         render(
             React.createElement(() => {
-                const handler = useOutsideEvent(onOutsideClick);
                 return (
                     <>
-                        <div id={'inside'} onClick={handler(onInsideClick)}>
+                        <OutsideEventContainer id={'inside'} onClick={onInsideClick} callback={onOutsideClick}>
                             {createPortal(<div id={'inside-portal'} />, document.body)}
-                        </div>
+                        </OutsideEventContainer>
                         <div id={'outside'} />
                     </>
                 );
