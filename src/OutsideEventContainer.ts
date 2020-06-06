@@ -9,7 +9,7 @@ export interface OutsideEventContainerProps {
     [key: string]: any;
 }
 
-const OutsideEventContainer = ({
+export const OutsideEventContainer = ({
     callback,
     eventHandlerName = 'onClick',
     [eventHandlerName]: additionalHandler,
