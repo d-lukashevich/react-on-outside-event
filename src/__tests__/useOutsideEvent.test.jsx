@@ -27,88 +27,90 @@ afterEach(() => {
     container = null;
 });
 
-it('catch clicks outside of container', () => {
-    act(() => {
-        render(
-            React.createElement(() => {
-                const handler = useOutsideEvent(onOutsideClick);
-                return (
-                    <>
-                        <div id={'inside'} onClick={handler} />
-                        <div id={'outside'} />
-                    </>
-                );
-            }),
-            container
-        );
+describe('useOutsideEvent', () => {
+    it('catch clicks outside of container', () => {
+        act(() => {
+            render(
+                React.createElement(() => {
+                    const handler = useOutsideEvent(onOutsideClick);
+                    return (
+                        <>
+                            <div id={'inside'} onClick={handler} />
+                            <div id={'outside'} />
+                        </>
+                    );
+                }),
+                container
+            );
+        });
+
+        const { outsideDiv, insideDiv } = getContainers();
+
+        if (outsideDiv && insideDiv) {
+            act(() => {
+                outsideDiv.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                document.body.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                insideDiv.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            });
+        }
+        expect(onOutsideClick).toHaveBeenCalledTimes(2);
     });
 
-    const { outsideDiv, insideDiv } = getContainers();
-
-    if (outsideDiv && insideDiv) {
+    it('catch clicks outside of container and execute nested handler', () => {
         act(() => {
-            outsideDiv.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-            document.body.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-            insideDiv.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            render(
+                React.createElement(() => {
+                    const handler = useOutsideEvent(onOutsideClick);
+                    return (
+                        <>
+                            <div id={'inside'} onClick={handler(onInsideClick)} />
+                            <div id={'outside'} />
+                        </>
+                    );
+                }),
+                container
+            );
         });
-    }
-    expect(onOutsideClick).toHaveBeenCalledTimes(2);
-});
 
-it('catch clicks outside of container and execute nested handler', () => {
-    act(() => {
-        render(
-            React.createElement(() => {
-                const handler = useOutsideEvent(onOutsideClick);
-                return (
-                    <>
-                        <div id={'inside'} onClick={handler(onInsideClick)} />
-                        <div id={'outside'} />
-                    </>
-                );
-            }),
-            container
-        );
+        const { outsideDiv, insideDiv } = getContainers();
+
+        if (outsideDiv && insideDiv) {
+            act(() => {
+                outsideDiv.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                document.body.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                insideDiv.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            });
+        }
+        expect(onOutsideClick).toHaveBeenCalledTimes(2);
+        expect(onInsideClick).toHaveBeenCalledTimes(1);
     });
 
-    const { outsideDiv, insideDiv } = getContainers();
-
-    if (outsideDiv && insideDiv) {
+    it('do not catch clicks inside portal (outside in DOM)', () => {
         act(() => {
-            outsideDiv.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-            document.body.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-            insideDiv.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            render(
+                React.createElement(() => {
+                    const handler = useOutsideEvent(onOutsideClick);
+                    return (
+                        <>
+                            <div id={'inside'} onClick={handler(onInsideClick)}>
+                                {createPortal(<div id={'inside-portal'} />, document.body)}
+                            </div>
+                            <div id={'outside'} />
+                        </>
+                    );
+                }),
+                container
+            );
         });
-    }
-    expect(onOutsideClick).toHaveBeenCalledTimes(2);
-    expect(onInsideClick).toHaveBeenCalledTimes(1);
-});
 
-it('do not catch clicks inside portal (outside in DOM)', () => {
-    act(() => {
-        render(
-            React.createElement(() => {
-                const handler = useOutsideEvent(onOutsideClick);
-                return (
-                    <>
-                        <div id={'inside'} onClick={handler(onInsideClick)}>
-                            {createPortal(<div id={'inside-portal'} />, document.body)}
-                        </div>
-                        <div id={'outside'} />
-                    </>
-                );
-            }),
-            container
-        );
+        const { outsideDiv, insideDiv, insideDivInPortal } = getContainers();
+
+        if (outsideDiv && insideDiv && insideDivInPortal) {
+            act(() => {
+                insideDivInPortal.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            });
+        }
+        expect(onOutsideClick).toHaveBeenCalledTimes(0);
+        expect(onInsideClick).toHaveBeenCalledTimes(1);
     });
-
-    const { outsideDiv, insideDiv, insideDivInPortal } = getContainers();
-
-    if (outsideDiv && insideDiv && insideDivInPortal) {
-        act(() => {
-            insideDivInPortal.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-        });
-    }
-    expect(onOutsideClick).toHaveBeenCalledTimes(0);
-    expect(onInsideClick).toHaveBeenCalledTimes(1);
 });
