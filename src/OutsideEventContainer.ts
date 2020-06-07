@@ -1,4 +1,4 @@
-import { createElement, forwardRef } from 'react';
+import { createElement, forwardRef, useMemo } from 'react';
 import useOutsideEvent from './useOutsideEvent';
 import { EventHandlerName } from './typings';
 
@@ -21,7 +21,10 @@ const OutsideEventContainer = forwardRef(
         ref
     ) => {
         const batter = useOutsideEvent(callback, eventHandlerName);
-        const syntheticHandler = typeof additionalHandler !== 'function' ? batter : batter(additionalHandler);
+        const syntheticHandler = useMemo(
+            () => (typeof additionalHandler !== 'function' ? batter : batter(additionalHandler)),
+            [batter, additionalHandler]
+        );
         return createElement(element, { [eventHandlerName]: syntheticHandler, ref, ...restProps });
     }
 );
