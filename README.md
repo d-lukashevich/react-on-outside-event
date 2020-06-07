@@ -98,7 +98,7 @@ const Example = () => {
 };
 ```
 
-Also, You could pass as element any component, but appropriate handler must be passed down the DOM.
+Also, You could pass as element any component, but appropriate handler must be passed down to the DOM.
 
 ```tsx
 import * as React from 'react';
@@ -122,7 +122,11 @@ const Example = () => {
 };
 ```
 
-Just like with the "useOutsideEvent", if You do not provide "eventHandlerName" it will be considered as "onClick".
+## Notes
+
+-   Just like with the "useOutsideEvent", if You do not provide "eventHandlerName" it will be considered as "onClick".
+-   All other props passed to the OutsideEventContainer (excluding "callback", "eventHandlerName", "element") will be transfer to the element.
+-   It is safe to use pure components as elements for OutsideEventContainer - all functions, created inside, are properly memoized.
 
 ## License
 
