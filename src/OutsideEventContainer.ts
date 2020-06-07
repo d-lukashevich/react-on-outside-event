@@ -3,9 +3,13 @@ import useOutsideEvent from './useOutsideEvent';
 import { EventHandlerName } from './typings';
 
 export interface OutsideEventContainerProps {
+    /** callback function that will be fired on outside event */
     callback?: (event: Event) => void | null;
+    /** name of the event handler, that corresponded with chosen event type. By default - 'onClick' */
     eventHandlerName?: EventHandlerName;
+    /** component that will be created as container. By default - 'div' */
     element?: string;
+    /** any other props that will be passed to the container */
     [key: string]: any;
 }
 

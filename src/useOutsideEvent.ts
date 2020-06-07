@@ -2,6 +2,12 @@ import { UIEvent, useMemo } from 'react';
 import { useEffect, useCallback, useRef } from 'react';
 import { EventHandlerName } from './typings';
 
+/**
+ * hook for adding callback function to events outside of the chosen container
+ * @param callback - callback function that will be fired on outside event
+ * @param eventHandlerName - name of the event handler, that corresponded with chosen event type. By default - 'onClick'
+ * @returns {function} handler that must be passed to the container used for defining outside scope
+ */
 export const useOutsideEvent = (
     callback?: (event: Event) => void | null,
     eventHandlerName: EventHandlerName = 'onClick'
