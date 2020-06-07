@@ -42,13 +42,13 @@ export const useOutsideEvent = (
 
     useEffect(() => {
         if (callback) {
-            const catcher = (event: Event) => {
-                if (callback && status.current) callback(event);
-                status.current = true;
-            };
+            const pitcher = () => (status.current = true);
+            const catcher = (event: Event) => status.current && callback(event);
 
+            document.addEventListener(eventName, pitcher, true);
             document.addEventListener(eventName, catcher);
             return () => {
+                document.removeEventListener(eventName, pitcher, true);
                 document.removeEventListener(eventName, catcher);
             };
         }
