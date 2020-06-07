@@ -3,7 +3,7 @@ import useOutsideEvent from './useOutsideEvent';
 import { EventHandlerName } from './typings';
 
 export interface OutsideEventContainerProps {
-    callback: (event: Event) => void;
+    callback?: (event: Event) => void | null;
     eventHandlerName?: EventHandlerName;
     element?: string;
     [key: string]: any;
