@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { render, unmountComponentAtNode, createPortal } from 'react-dom';
 import { act } from 'react-dom/test-utils';
 
@@ -109,5 +109,63 @@ describe('OutsideEventContainer', () => {
         }
         expect(onOutsideClick).toHaveBeenCalledTimes(0);
         expect(onInsideClick).toHaveBeenCalledTimes(1);
+    });
+
+    it('container changes through element prop', () => {
+        act(() => {
+            render(
+                React.createElement(() => {
+                    return (
+                        <>
+                            <OutsideEventContainer id={'inside'} element={'section'} />
+                        </>
+                    );
+                }),
+                container
+            );
+        });
+
+        const { outsideDiv, insideDiv, insideDivInPortal } = getContainers();
+
+        if (outsideDiv && insideDiv && insideDivInPortal) {
+            act(() => {
+                insideDivInPortal.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            });
+        }
+        expect(document.querySelectorAll('section')).toHaveLength(1);
+    });
+
+    it('React.memo components do not rerender if passed as element', () => {
+        let renderContainerComponent = jest.fn();
+        const Component = React.memo((props) => {
+            renderContainerComponent();
+            return <div {...props} />;
+        });
+
+        act(() => {
+            render(
+                React.createElement(() => {
+                    const [, setState] = React.useState(false);
+                    const callback = useCallback(() => setState(true), [setState]);
+                    const nestedFn = useCallback(() => {}, []);
+                    return (
+                        <>
+                            <OutsideEventContainer callback={callback} onClick={nestedFn} element={Component} />
+                            <div id={'outside'} />
+                        </>
+                    );
+                }),
+                container
+            );
+        });
+
+        const { outsideDiv } = getContainers();
+
+        if (outsideDiv) {
+            act(() => {
+                outsideDiv.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            });
+        }
+        expect(renderContainerComponent).toHaveBeenCalledTimes(1);
     });
 });
