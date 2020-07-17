@@ -1,6 +1,13 @@
-import { UIEvent, useMemo } from 'react';
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useMemo, useCallback, useRef, UIEvent } from 'react';
 import { EventHandlerName } from './typings';
+
+const validateEvent = ({ type }: UIEvent, eventName: string) => {
+    if (type !== eventName) {
+        throw new Error(
+            `React-on-outside-event expected event type "${eventName}", but got "${type}". Please, check that You passed outside-event handler with proper event name to your react element.`
+        );
+    }
+};
 
 /**
  * hook for adding callback function to events outside of the chosen container
@@ -13,26 +20,15 @@ export const useOutsideEvent = (
     eventHandlerName: EventHandlerName = 'onClick'
 ) => {
     const eventName = useMemo(() => eventHandlerName.substring(2).toLowerCase(), [eventHandlerName]);
-    const validateEvent = useMemo(
-        () => ({ type }: UIEvent) => {
-            if (type !== eventName) {
-                throw new Error(
-                    `React-on-outside-event expected event type "${eventName}", but got "${type}". Please, check that You passed outside-event handler with proper event name to your react element.`
-                );
-            }
-        },
-        [eventName]
-    );
-
     const handleEvent = useCallback(
         (event: UIEvent) => {
             if (callback) {
-                validateEvent(event);
+                validateEvent(event, eventName);
                 status.current = false;
             }
             return undefined;
         },
-        [callback, validateEvent]
+        [callback, eventName]
     );
 
     const status = useRef(true);
