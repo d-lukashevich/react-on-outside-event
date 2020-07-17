@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.1.1 - 2020-07-18
+
+-   Improve performance of useOutsideEvent hook
+
 ## 1.1.0 - 2020-02-28
 
 -   Add ref forwarding for OutsideEventControlled
