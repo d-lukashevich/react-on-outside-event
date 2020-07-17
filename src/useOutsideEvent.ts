@@ -24,16 +24,20 @@ export const useOutsideEvent = (
         [eventName]
     );
 
+    const handleEvent = useCallback(
+        (event: UIEvent) => {
+            if (callback) {
+                validateEvent(event);
+                status.current = false;
+            }
+            return undefined;
+        },
+        [callback, validateEvent]
+    );
+
     const status = useRef(true);
     const batter = useCallback(
         (incoming: UIEvent | ((event: UIEvent) => void)) => {
-            const handleEvent = (event: UIEvent) => {
-                if (callback) {
-                    validateEvent(event);
-                    status.current = false;
-                }
-                return undefined;
-            };
             if (typeof incoming === 'function') {
                 return (event: UIEvent) => {
                     incoming(event);
@@ -43,7 +47,7 @@ export const useOutsideEvent = (
                 return handleEvent(incoming);
             }
         },
-        [callback, status]
+        [handleEvent]
     );
 
     useEffect(() => {
