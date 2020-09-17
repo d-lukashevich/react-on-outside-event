@@ -1,6 +1,6 @@
 {
   "name": "react-on-outside-event",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Tools for detecting events outside of VDOM subtree, with portals support",
   "author": "d-lukashevich",
   "license": "MIT",
@@ -13,9 +13,9 @@
     "npm": ">=5"
   },
   "files": [
-      "dist",
-      "LICENSE",
-      "README.md"
+    "dist",
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
     "test": "cross-env CI=1 react-scripts test --env=jsdom",

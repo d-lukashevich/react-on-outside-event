@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.2.0 - 2020-09-17
+
+-   Solve frequent invalidation of useCallback functions due to callback prop changes
+
 ## 1.1.1 - 2020-07-18
 
 -   Improve performance of useOutsideEvent hook

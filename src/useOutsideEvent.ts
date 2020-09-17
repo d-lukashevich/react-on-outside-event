@@ -20,15 +20,19 @@ export const useOutsideEvent = (
     eventHandlerName: EventHandlerName = 'onClick'
 ) => {
     const eventName = useMemo(() => eventHandlerName.substring(2).toLowerCase(), [eventHandlerName]);
+
+    const callbackRef = useRef(callback);
+    callbackRef.current = callback;
+
     const handleEvent = useCallback(
         (event: UIEvent) => {
-            if (callback) {
+            if (callbackRef.current) {
                 validateEvent(event, eventName);
                 status.current = false;
             }
             return undefined;
         },
-        [callback, eventName]
+        [eventName]
     );
 
     const status = useRef(true);
@@ -47,9 +51,9 @@ export const useOutsideEvent = (
     );
 
     useEffect(() => {
-        if (callback) {
+        if (callbackRef.current) {
             const pitcher = () => (status.current = true);
-            const catcher = (event: Event) => status.current && callback(event);
+            const catcher = (event: Event) => status.current && callbackRef.current && callbackRef.current(event);
 
             document.addEventListener(eventName, pitcher, true);
             document.addEventListener(eventName, catcher);
@@ -59,7 +63,7 @@ export const useOutsideEvent = (
             };
         }
         return undefined;
-    }, [callback, eventName]);
+    }, [eventName]);
 
     return batter;
 };
