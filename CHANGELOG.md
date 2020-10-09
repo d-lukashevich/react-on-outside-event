@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.2.1 - 2020-10-09
+
+-   Restore proper util behavior when callback switches between func and undefined
+
 ## 1.2.0 - 2020-09-17
 
 -   Solve frequent invalidation of useCallback functions due to callback prop changes

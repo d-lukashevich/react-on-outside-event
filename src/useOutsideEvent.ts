@@ -63,7 +63,7 @@ export const useOutsideEvent = (
             };
         }
         return undefined;
-    }, [eventName]);
+    }, [!callback, eventName]);
 
     return batter;
 };
