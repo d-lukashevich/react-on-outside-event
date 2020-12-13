@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useCallback, useRef, UIEvent } from 'react';
-import { EventHandlerName } from './typings';
+import { useEffect, useMemo, useCallback, useRef, UIEvent, MutableRefObject } from 'react';
+import { EventHandlerName, Callback } from './typings';
 
 const validateEvent = ({ type }: UIEvent, eventName: string) => {
     if (type !== eventName) {
@@ -9,31 +9,30 @@ const validateEvent = ({ type }: UIEvent, eventName: string) => {
     }
 };
 
+const handleEvent = (
+    event: UIEvent,
+    eventName: string,
+    callbackRef: MutableRefObject<Callback | undefined>,
+    statusRef: MutableRefObject<boolean>
+) => {
+    if (callbackRef.current) {
+        validateEvent(event, eventName);
+        statusRef.current = false;
+    }
+    return undefined;
+};
+
 /**
  * hook for adding callback function to events outside of the chosen container
  * @param callback - callback function that will be fired on outside event
  * @param eventHandlerName - name of the event handler, that corresponded with chosen event type. By default - 'onClick'
  * @returns {function} handler that must be passed to the container used for defining outside scope
  */
-export const useOutsideEvent = (
-    callback?: (event: Event) => void | null,
-    eventHandlerName: EventHandlerName = 'onClick'
-) => {
+export const useOutsideEvent = (callback?: Callback, eventHandlerName: EventHandlerName = 'onClick') => {
     const eventName = useMemo(() => eventHandlerName.substring(2).toLowerCase(), [eventHandlerName]);
 
     const callbackRef = useRef(callback);
     callbackRef.current = callback;
-
-    const handleEvent = useCallback(
-        (event: UIEvent) => {
-            if (callbackRef.current) {
-                validateEvent(event, eventName);
-                status.current = false;
-            }
-            return undefined;
-        },
-        [eventName]
-    );
 
     const status = useRef(true);
     const batter = useCallback(
@@ -41,13 +40,13 @@ export const useOutsideEvent = (
             if (typeof incoming === 'function') {
                 return (event: UIEvent) => {
                     incoming(event);
-                    return handleEvent(event);
+                    return handleEvent(event, eventName, callbackRef, status);
                 };
             } else {
-                return handleEvent(incoming);
+                return handleEvent(incoming, eventName, callbackRef, status);
             }
         },
-        [handleEvent]
+        [eventName]
     );
 
     useEffect(() => {

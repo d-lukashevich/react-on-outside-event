@@ -1,3 +1,5 @@
+export type Callback = (event: Event) => void | null;
+
 export type EventHandlerName =
     // Clipboard Events
     | 'onCopy'
